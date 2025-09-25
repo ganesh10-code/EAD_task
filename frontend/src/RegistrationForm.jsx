@@ -31,14 +31,48 @@ function RegistrationForm() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(JSON.stringify(form, null, 2));
+    setMessage('');
+    try {
+      const response = await fetch('http://localhost:5000/api/students', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form),
+      });
+      if (response.ok) {
+        setMessage('Registration successful!');
+        setForm({
+          name: '',
+          rollno: '',
+          gender: '',
+          department: '',
+          section: '',
+          skills: [],
+        });
+        setTimeout(() => setMessage(''), 3000);
+      } else {
+        const errorData = await response.json();
+        setMessage('Error: ' + (errorData.error || 'Registration failed'));
+      }
+    } catch (err) {
+      setMessage('Error: Could not connect to server');
+    }
   };
 
   return (
-    <form className="registration-form" onSubmit={handleSubmit}>
-      <h2>Registration Form</h2>
+    <>
+      {message && (
+        <div className="message-container">
+          {message}
+        </div>
+      )}
+      <form className="registration-form" onSubmit={handleSubmit}>
+        <h2>Registration Form</h2>
       <label>
         Name:
         <input type="text" name="name" value={form.name} onChange={handleChange} required />
@@ -91,6 +125,7 @@ function RegistrationForm() {
       </label>
       <button type="submit">Register</button>
     </form>
+  </>
   );
 }
 

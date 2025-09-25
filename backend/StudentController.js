@@ -1,6 +1,6 @@
-const Student = require('./student.model');
+const Student = require('./StudentModel');
 
-// Create a new student
+
 exports.createStudent = async (req, res) => {
   try {
     const student = new Student(req.body);
@@ -11,7 +11,6 @@ exports.createStudent = async (req, res) => {
   }
 };
 
-// Get all students
 exports.getStudents = async (req, res) => {
   try {
     const students = await Student.find();
