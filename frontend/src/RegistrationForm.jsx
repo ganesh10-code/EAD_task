@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+import { API_URL } from "./api.js";
 
-const departmentOptions = ['CSE','IT', 'ECE', 'EEE', 'MECH', 'CIVIL'];
-const sectionOptions = ['1', '2', '3'];
-const skillsOptions = ['C++', 'Java', 'Python', 'Ruby'];
+const departmentOptions = ["CSE", "IT", "ECE", "EEE", "MECH", "CIVIL"];
+const sectionOptions = ["1", "2", "3"];
+const skillsOptions = ["C++", "Java", "Python", "Ruby"];
 
 function RegistrationForm() {
   const [form, setForm] = useState({
-    name: '',
-    rollno: '',
-    gender: '',
-    department: '',
-    section: '',
+    name: "",
+    rollno: "",
+    gender: "",
+    department: "",
+    section: "",
     skills: [],
   });
 
@@ -26,106 +27,149 @@ function RegistrationForm() {
       if (checked) {
         return { ...prevForm, skills: [...prevForm.skills, value] };
       } else {
-        return { ...prevForm, skills: prevForm.skills.filter((skill) => skill !== value) };
+        return {
+          ...prevForm,
+          skills: prevForm.skills.filter((skill) => skill !== value),
+        };
       }
     });
   };
 
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
+    setMessage("");
     try {
-      const response = await fetch('http://localhost:5000/api/students', {
-        method: 'POST',
+      const response = await fetch(`${API_URL}/api/students`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(form),
       });
       if (response.ok) {
-        setMessage('Registration successful!');
+        setMessage("Registration successful!");
         setForm({
-          name: '',
-          rollno: '',
-          gender: '',
-          department: '',
-          section: '',
+          name: "",
+          rollno: "",
+          gender: "",
+          department: "",
+          section: "",
           skills: [],
         });
-        setTimeout(() => setMessage(''), 3000);
+        setTimeout(() => setMessage(""), 3000);
       } else {
         const errorData = await response.json();
-        setMessage('Error: ' + (errorData.error || 'Registration failed'));
+        setMessage("Error: " + (errorData.error || "Registration failed"));
       }
     } catch (err) {
-      setMessage('Error: Could not connect to server');
+      setMessage("Error: Could not connect to server");
     }
   };
 
   return (
     <>
-      {message && (
-        <div className="message-container">
-          {message}
-        </div>
-      )}
+      {message && <div className="message-container">{message}</div>}
       <form className="registration-form" onSubmit={handleSubmit}>
         <h2>Registration Form</h2>
-      <label>
-        Name:
-        <input type="text" name="name" value={form.name} onChange={handleChange} required />
-      </label>
-      <label>
-        Roll No:
-        <input type="text" name="rollno" value={form.rollno} onChange={handleChange} required />
-      </label>
-      <label>
-        Gender:
-        <div className="radio-group">
-            <label><input type='radio' name='gender' value='Male' checked={form.gender==='Male'} onChange={handleChange} />Male</label>
-            <label><input type='radio' name='gender' value='Female' checked={form.gender==='Female'} onChange={handleChange} />Female</label>
-        </div> 
-      </label>
-      <label>
-        Department:
-        <select name="department" value={form.department} onChange={handleChange} required>
-          <option value="">Select Department</option>
-          {departmentOptions.map((d) => (
-            <option key={d} value={d}>{d}</option>
-          ))}
-        </select>
-      </label>
-      <label>
-        Section:
-        <select name="section" value={form.section} onChange={handleChange} required>
-          <option value="">Select Section</option>
-          {sectionOptions.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
-      </label>
-      <label>
-        Skills:
-        <div className="checkbox-group">
-          {skillsOptions.map((skill) => (
-            <label key={skill}>
+        <label>
+          Name:
+          <input
+            type="text"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <label>
+          Roll No:
+          <input
+            type="text"
+            name="rollno"
+            value={form.rollno}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <label>
+          Gender:
+          <div className="radio-group">
+            <label>
               <input
-                type="checkbox"
-                name="skills"
-                value={skill}
-                checked={form.skills.includes(skill)}
-                onChange={handleSkillsChange}
+                type="radio"
+                name="gender"
+                value="Male"
+                checked={form.gender === "Male"}
+                onChange={handleChange}
               />
-              {skill}
+              Male
             </label>
-          ))}
-        </div>
-      </label>
-      <button type="submit">Register</button>
-    </form>
-  </>
+            <label>
+              <input
+                type="radio"
+                name="gender"
+                value="Female"
+                checked={form.gender === "Female"}
+                onChange={handleChange}
+              />
+              Female
+            </label>
+          </div>
+        </label>
+        <label>
+          Department:
+          <select
+            name="department"
+            value={form.department}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Department</option>
+            {departmentOptions.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Section:
+          <select
+            name="section"
+            value={form.section}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Section</option>
+            {sectionOptions.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Skills:
+          <div className="checkbox-group">
+            {skillsOptions.map((skill) => (
+              <label key={skill}>
+                <input
+                  type="checkbox"
+                  name="skills"
+                  value={skill}
+                  checked={form.skills.includes(skill)}
+                  onChange={handleSkillsChange}
+                />
+                {skill}
+              </label>
+            ))}
+          </div>
+        </label>
+        <button type="submit">Register</button>
+      </form>
+    </>
   );
 }
 
