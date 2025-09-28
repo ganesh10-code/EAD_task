@@ -35,11 +35,11 @@ function RegistrationForm() {
     });
   };
 
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState({ text: "", type: "" });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
+    setMessage({ text: "", type: "" });
     try {
       const response = await fetch(`${API_URL}/api/students`, {
         method: "POST",
@@ -49,7 +49,7 @@ function RegistrationForm() {
         body: JSON.stringify(form),
       });
       if (response.ok) {
-        setMessage("Registration successful!");
+        setMessage({ text: "Registration successful!", type: "success" });
         setForm({
           name: "",
           rollno: "",
@@ -61,16 +61,23 @@ function RegistrationForm() {
         setTimeout(() => setMessage(""), 3000);
       } else {
         const errorData = await response.json();
-        setMessage("Error: " + (errorData.error || "Registration failed"));
+        setMessage({
+          text: "Error: " + (errorData.error || "Registration failed"),
+          type: "error",
+        });
       }
     } catch (err) {
-      setMessage("Error: Could not connect to server");
+      setMessage({ text: "Error: Could not connect to server", type: "error" });
     }
   };
 
   return (
     <>
-      {message && <div className="message-container">{message}</div>}
+      {message && (
+        <div className={`message-container ${message.type}`}>
+          {message.text}
+        </div>
+      )}
       <form className="registration-form" onSubmit={handleSubmit}>
         <h2>Registration Form</h2>
         <label>
